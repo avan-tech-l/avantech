@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AvanTech — Suporte de TI para Empresas em Limeira</title>
+<meta name="description" content="Suporte de TI mensal para empresas em Limeira. Computador lento, vírus, rede caindo? A AvanTech resolve com preço fixo. Diagnóstico gratuito.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #00AAFF;
+    --blue-dim: #0077CC;
+    --blue-glow: rgba(0,170,255,0.15);
+    --blue-glow-strong: rgba(0,170,255,0.35);
+    --bg: #03060D;
+    --bg2: #080E1A;
+    --bg3: #0C1424;
+    --text: #E8F4FF;
+    --text-dim: #7A9EBF;
+    --border: rgba(0,170,255,0.15);
+    --border-bright: rgba(0,170,255,0.4);
+    --green: #00FF88;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--blue);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--blue);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.15s, width 0.2s, height 0.2s;
+    opacity: 0.5;
+  }
+
+  /* CANVAS BACKGROUND */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* NAVBAR */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 4%;
+    background: rgba(3,6,13,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+  .nav-logo span { color: var(--blue); }
+
+  .nav-cta {
+    background: var(--blue);
+    color: #000;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 22px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: box-shadow 0.2s, transform 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .nav-cta:hover {
+    box-shadow: 0 0 24px var(--blue-glow-strong);
+    transform: translateY(-1px);
+  }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 4% 4rem;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border-bright);
+    background: var(--blue-glow);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero h1 {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    max-width: 900px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero h1 .accent { color: var(--blue); text-shadow: 0 0 40px rgba(0,170,255,0.5); }
+
+  .hero-sub {
+    font-size: clamp(15px, 2vw, 18px);
+    color: var(--text-dim);
+    max-width: 560px;
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--blue);
+    color: #000;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 16px 32px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: box-shadow 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: rgba(255,255,255,0.2);
+    transform: skewX(-20deg);
+    transition: left 0.4s;
+  }
+  .btn-primary:hover::after { left: 150%; }
+  .btn-primary:hover {
+    box-shadow: 0 0 40px var(--blue-glow-strong), 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 16px 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border-bright);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .btn-secondary:hover {
+    background: var(--blue-glow);
+    border-color: var(--blue);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 4rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s forwards;
+  }
+
+  .hero-stat {
+    text-align: center;
+  }
+
+  .hero-stat .num {
+    font-family: 'Orbitron', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--blue);
+  }
+
+  .hero-stat .label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* PROBLEMS */
+  .problems {
+    padding: 6rem 4%;
+    background: var(--bg2);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .section-tag {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .section-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .section-header p {
+    font-size: 16px;
+    color: var(--text-dim);
+    margin-top: 1rem;
+    max-width: 500px;
+    margin-inline: auto;
+  }
+
+  .problems-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .problem-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .problem-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .problem-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .problem-card:hover::before { opacity: 1; }
+
+  .problem-icon {
+    width: 48px; height: 48px;
+    background: var(--blue-glow);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.2rem;
+    font-size: 22px;
+  }
+
+  .problem-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .problem-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+
+  /* PLANS */
+  .plans {
+    padding: 6rem 4%;
+  }
+
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .plan-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .plan-card.featured {
+    border-color: var(--blue);
+    box-shadow: 0 0 60px var(--blue-glow), inset 0 0 60px rgba(0,170,255,0.03);
+  }
+
+  .plan-card.featured::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  }
+
+  .plan-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  }
+
+  .plan-popular {
+    display: inline-block;
+    background: var(--blue);
+    color: #000;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+
+  .plan-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .plan-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .plan-price {
+    margin-bottom: 1.75rem;
+  }
+
+  .plan-price .amount {
+    font-family: 'Orbitron', monospace;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--blue);
+  }
+
+  .plan-price .period {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-left: 4px;
+  }
+
+  .plan-features {
+    list-style: none;
+    margin-bottom: 2rem;
+  }
+
+  .plan-features li {
+    font-size: 14px;
+    color: var(--text-dim);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .plan-features li:last-child { border-bottom: none; }
+
+  .plan-features li::before {
+    content: '▸';
+    color: var(--blue);
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+
+  .plan-btn {
+    display: block;
+    text-align: center;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+  }
+
+  .plan-btn.primary {
+    background: var(--blue);
+    color: #000;
+  }
+  .plan-btn.primary:hover {
+    box-shadow: 0 0 30px var(--blue-glow-strong);
+    transform: translateY(-1px);
+  }
+
+  .plan-btn.outline {
+    background: transparent;
+    color: var(--blue);
+    border: 1px solid var(--border-bright);
+  }
+  .plan-btn.outline:hover {
+    background: var(--blue-glow);
+  }
+
+  /* AVULSOS */
+  .avulsos {
+    padding: 4rem 4%;
+    background: var(--bg2);
+  }
+
+  .avulsos-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+  }
+
+  .avulsos-inner h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  .avulsos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+  }
+
+  .avulso-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .avulso-row:last-child { border-bottom: none; }
+
+  .avulso-row .name { color: var(--text-dim); }
+  .avulso-row .price {
+    color: var(--blue);
+    font-weight: 500;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+  }
+
+  /* DIFERENCIAIS */
+  .diferenciais {
+    padding: 6rem 4%;
+  }
+
+  .diff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .diff-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .diff-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-4px);
+  }
+
+  .diff-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 30px var(--blue-glow-strong);
+  }
+
+  .diff-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .diff-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* GARANTIA */
+  .garantia {
+    padding: 5rem 4%;
+    background: var(--bg2);
+  }
+
+  .garantia-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .garantia-text h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  .garantia-text p {
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+  }
+
+  .garantia-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .garantia-items li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  .garantia-items li span {
+    width: 24px; height: 24px;
+    background: var(--blue-glow);
+    border: 1px solid var(--border-bright);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blue);
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .garantia-box {
+    background: var(--bg3);
+    border: 1px solid var(--border-bright);
+    border-radius: 16px;
+    padding: 2.5rem;
+    text-align: center;
+    box-shadow: 0 0 60px var(--blue-glow);
+  }
+
+  .garantia-circle {
+    width: 100px; height: 100px;
+    border: 2px solid var(--blue);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.2rem;
+    box-shadow: 0 0 30px var(--blue-glow-strong);
+  }
+
+  .garantia-circle .days {
+    font-family: 'Orbitron', monospace;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--blue);
+    line-height: 1;
+  }
+
+  .garantia-circle .dias-txt {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .garantia-box h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .garantia-box p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* CTA FINAL */
+  .cta-final {
+    padding: 7rem 4%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-final::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,170,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-final h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.6rem, 4vw, 3rem);
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .cta-final h2 span { color: var(--blue); }
+
+  .cta-final p {
+    font-size: 16px;
+    color: var(--text-dim);
+    max-width: 500px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+    position: relative;
+  }
+
+  .cta-final .btn-primary {
+    font-size: 16px;
+    padding: 18px 40px;
+    position: relative;
+  }
+
+  .cta-note {
+    margin-top: 1.2rem;
+    font-size: 13px;
+    color: var(--text-dim);
+    position: relative;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 2rem 4%;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  footer strong { color: var(--blue); font-family: 'Orbitron', monospace; font-weight: 700; font-size: 12px; }
+
+  /* WHATSAPP FLOAT */
+  .wa-float {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #25D366;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 14px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 8px 32px rgba(37,211,102,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: floatIn 1s 1.5s both;
+  }
+
+  .wa-float:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 12px 40px rgba(37,211,102,0.5);
+  }
+
+  @keyframes floatIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .wa-float svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
+
+  /* SCROLL ANIMATIONS */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .garantia-inner { grid-template-columns: 1fr; }
+    .hero-stats { gap: 2rem; }
+    nav { padding: 1rem 4%; }
+    .nav-logo { font-size: 16px; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+
+  /* SCANLINE EFFECT */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9997;
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-logo">Avan<span>Tech</span></div>
+  <a class="nav-cta" href="https://wa.me/5519994399611?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20suporte%20de%20TI%20da%20AvanTech." target="_blank">Falar no WhatsApp</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">Limeira e região — Suporte de TI Profissional</div>
+  <h1>Sua empresa merece<br><span class="accent">tecnologia que funciona.</span></h1>
+  <p class="hero-sub">Computador lento, vírus, rede caindo? A AvanTech resolve com suporte mensal de preço fixo. Sem surpresa, sem dor de cabeça.</p>
+  <div class="hero-btns">
+    <a class="btn-primary" href="https://wa.me/5519994399611?text=Ol%C3%A1!%20Quero%20solicitar%20um%20diagn%C3%B3stico%20gratuito%20para%20minha%20empresa." target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#000"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Diagnóstico Gratuito
+    </a>
+    <a class="btn-secondary" href="#planos">Ver Planos</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="num">4h</div>
+      <div class="label">Tempo de resposta</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">30d</div>
+      <div class="label">Garantia total</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">R$149</div>
+      <div class="label">A partir de /mês</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">100%</div>
+      <div class="label">Preço fixo</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMAS -->
+<section class="problems" id="problemas">
+  <div class="section-header reveal">
+    <span class="section-tag">Você já passou por isso?</span>
+    <h2>Problemas que travam<br>sua empresa todo dia</h2>
+    <p>Cada minuto com tecnologia com falha é dinheiro e produtividade perdidos.</p>
+  </div>
+  <div class="problems-grid">
+    <div class="problem-card reveal">
+      <div class="problem-icon">💻</div>
+      <h3>Computador lento</h3>
+      <p>Sua equipe perde horas esperando o sistema responder. Produtividade zero, frustração total.</p>
+    </div>
+    <div class="problem-card reveal">
+      <div class="problem-icon">🦠</div>
+      <h3>Vírus e malware</h3>
+      <p>Dados da sua empresa em risco. Um ataque pode apagar tudo ou expor informações sigilosas.</p>
+    </div>
+    <div class="problem-card reveal">
+      <div class="problem-icon">📡</div>
+      <h3>Rede e Wi-Fi instável</h3>
+      <p>Reuniões caindo, sistemas offline, impressora sumindo da rede. Caos no dia a dia.</p>
+    </div>
+    <div class="problem-card reveal">
+      <div class="problem-icon">🆘</div>
+      <h3>Sem suporte técnico</h3>
+      <p>Quando o problema aparece, ninguém pra chamar. Você fica na mão sem saber o que fazer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section class="plans" id="planos">
+  <div class="section-header reveal">
+    <span class="section-tag">Planos mensais</span>
+    <h2>Escolha o plano<br>ideal para sua empresa</h2>
+    <p>Preço fixo todo mês. Sem surpresas, sem cobranças extras pelo que está incluso.</p>
+  </div>
+  <div class="plans-grid">
+
+    <div class="plan-card reveal">
+      <div class="plan-name">Basic</div>
+      <div class="plan-desc">Ideal para MEI e pequenos negócios com até 3 computadores</div>
+      <div class="plan-price">
+        <span class="amount">R$149</span><span class="period">,90/mês</span>
+      </div>
+      <ul class="plan-features">
+        <li>Suporte remoto via WhatsApp</li>
+        <li>Formatação inclusa se necessário</li>
+        <li>Instalação de programas e atualizações</li>
+        <li>Limpeza de vírus e malware</li>
+        <li>Orientação de backup</li>
+        <li>Resposta em até 4 horas</li>
+      </ul>
+      <a class="plan-btn outline" href="https://wa.me/5519994399611?text=Ol%C3%A1!%20Quero%20contratar%20o%20Plano%20Basic%20da%20AvanTech." target="_blank">Contratar Basic</a>
+    </div>
+
+    <div class="plan-card featured reveal">
+      <div class="plan-popular">Mais popular</div>
+      <div class="plan-name">Escalar</div>
+      <div class="plan-desc">Ideal para pequenas empresas com até 8 computadores</div>
+      <div class="plan-price">
+        <span class="amount">R$199</span><span class="period">,90/mês</span>
+      </div>
+      <ul class="plan-features">
+        <li>Tudo do Basic</li>
+        <li>Visita presencial 1x por mês</li>
+        <li>Formatação inclusa se necessário</li>
+        <li>Configuração de e-mail corporativo</li>
+        <li>Instalação e config. de impressoras</li>
+        <li>Configuração de rede e Wi-Fi</li>
+        <li>Relatório mensal detalhado</li>
+        <li>Resposta em até 2 horas</li>
+      </ul>
+      <a class="plan-btn primary" href="https://wa.me/5519994399611?text=Ol%C3%A1!%20Quero%20contratar%20o%20Plano%20Escalar%20da%20AvanTech." target="_blank">Contratar Escalar</a>
+    </div>
+
+    <div class="plan-card reveal">
+      <div class="plan-name">Premium</div>
+      <div class="plan-desc">Ideal para empresas com até 15 computadores</div>
+      <div class="plan-price">
+        <span class="amount">R$297</span><span class="period">,90/mês</span>
+      </div>
+      <ul class="plan-features">
+        <li>Tudo do Escalar</li>
+        <li>Visitas presenciais ilimitadas</li>
+        <li>Formatação ilimitada se necessário</li>
+        <li>Suporte prioritário</li>
+        <li>Número direto do técnico</li>
+        <li>Resposta em até 1 hora</li>
+      </ul>
+      <a class="plan-btn outline" href="https://wa.me/5519994399611?text=Ol%C3%A1!%20Quero%20contratar%20o%20Plano%20Premium%20da%20AvanTech." target="_blank">Contratar Premium</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- AVULSOS -->
+<section class="avulsos">
+  <div class="avulsos-inner reveal">
+    <h3>⚡ Serviços avulsos — sem mensalidade</h3>
+    <div class="avulsos-grid">
+      <div>
+        <div class="avulso-row"><span class="name">Formatação com Windows</span><span class="price">R$150</span></div>
+        <div class="avulso-row"><span class="name">Formatação com backup</span><span class="price">R$200</span></div>
+        <div class="avulso-row"><span class="name">Limpeza de vírus</span><span class="price">R$100</span></div>
+        <div class="avulso-row"><span class="name">Visita avulsa</span><span class="price">R$100</span></div>
+      </div>
+      <div>
+        <div class="avulso-row"><span class="name">Configuração de rede/Wi-Fi</span><span class="price">R$120</span></div>
+        <div class="avulso-row"><span class="name">Configuração de impressora</span><span class="price">R$80</span></div>
+        <div class="avulso-row"><span class="name">Instalação de programas</span><span class="price">R$60</span></div>
+        <div class="avulso-row"><span class="name">Suporte remoto avulso</span><span class="price">R$80/h</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFERENCIAIS -->
+<section class="diferenciais" id="diferenciais">
+  <div class="section-header reveal">
+    <span class="section-tag">Por que a AvanTech?</span>
+    <h2>Diferenciais que fazem<br>a diferença de verdade</h2>
+  </div>
+  <div class="diff-grid">
+    <div class="diff-card reveal">
+      <div class="diff-num">R$0</div>
+      <h3>Diagnóstico gratuito</h3>
+      <p>Antes de qualquer cobrança, analisamos seus computadores sem custo.</p>
+    </div>
+    <div class="diff-card reveal">
+      <div class="diff-num">4h</div>
+      <h3>Resposta garantida</h3>
+      <p>No plano Basic em até 4h. No Premium em até 1h. Você nunca fica na mão.</p>
+    </div>
+    <div class="diff-card reveal">
+      <div class="diff-num">30d</div>
+      <h3>Garantia total</h3>
+      <p>Todo serviço realizado tem 30 dias de garantia. Deu problema, a gente resolve.</p>
+    </div>
+    <div class="diff-card reveal">
+      <div class="diff-num">100%</div>
+      <h3>Preço fixo</h3>
+      <p>Você sabe exatamente quanto vai pagar. Sem cobranças surpresa no final do mês.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GARANTIA -->
+<section class="garantia">
+  <div class="garantia-inner">
+    <div class="garantia-text reveal">
+      <span class="section-tag">Nosso compromisso</span>
+      <h2>Você só paga quando está satisfeito</h2>
+      <p>A AvanTech trabalha com total transparência. Você recebe relatório de tudo que foi feito, sabe o que está incluso no seu plano e nunca é surpreendido com cobranças extras.</p>
+      <ul class="garantia-items">
+        <li><span>✓</span> 30 dias de garantia em todos os serviços</li>
+        <li><span>✓</span> Relatório mensal do que foi realizado</li>
+        <li><span>✓</span> Preço fixo sem surpresas</li>
+        <li><span>✓</span> Cancelamento com aviso de 30 dias</li>
+        <li><span>✓</span> Atendimento humanizado e direto</li>
+      </ul>
+    </div>
+    <div class="garantia-box reveal">
+      <div class="garantia-circle">
+        <span class="days">30</span>
+        <span class="dias-txt">dias</span>
+      </div>
+      <h3>Garantia Total</h3>
+      <p>Se qualquer serviço apresentar problema dentro de 30 dias, resolvemos sem custo adicional.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>Pronto para ter uma empresa<br><span>sem dor de cabeça com TI?</span></h2>
+  <p>Fale agora com a AvanTech e ganhe um diagnóstico gratuito dos computadores da sua empresa em Limeira.</p>
+  <a class="btn-primary" href="https://wa.me/5519994399611?text=Ol%C3%A1!%20Quero%20o%20diagn%C3%B3stico%20gratuito%20da%20AvanTech%20para%20minha%20empresa." target="_blank" style="font-size:16px; padding: 18px 40px;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="#000"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Falar no WhatsApp agora
+  </a>
+  <p class="cta-note">✓ Diagnóstico 100% gratuito &nbsp;·&nbsp; ✓ Sem compromisso &nbsp;·&nbsp; ✓ Resposta em minutos</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>AVANTECH</strong> &nbsp;·&nbsp; Suporte de TI para Empresas em Limeira &nbsp;·&nbsp; (19) 99439-9611
+  <br><br>
+  <span style="font-size:11px">© 2025 AvanTech. Todos os direitos reservados.</span>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a class="wa-float" href="https://wa.me/5519994399611?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20AvanTech%20e%20quero%20saber%20mais." target="_blank">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  Falar no WhatsApp
+</a>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  if (cursor) { cursor.style.left = mx - 5 + 'px'; cursor.style.top = my - 5 + 'px'; }
+  if (ring) { ring.style.left = rx - 18 + 'px'; ring.style.top = ry - 18 + 'px'; }
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => { if(ring) { ring.style.width = '56px'; ring.style.height = '56px'; ring.style.marginLeft = '-10px'; ring.style.marginTop = '-10px'; } });
+  el.addEventListener('mouseleave', () => { if(ring) { ring.style.width = '36px'; ring.style.height = '36px'; ring.style.marginLeft = '0'; ring.style.marginTop = '0'; } });
+});
+
+// CANVAS PARTICLES
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], lines = [];
+
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.4;
+    this.vy = (Math.random() - 0.5) * 0.4;
+    this.r = Math.random() * 1.5 + 0.5;
+    this.alpha = Math.random() * 0.5 + 0.1;
+  }
+  update() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,170,255,${this.alpha})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+// Grid lines
+function drawGrid() {
+  ctx.strokeStyle = 'rgba(0,170,255,0.03)';
+  ctx.lineWidth = 1;
+  const spacing = 60;
+  for (let x = 0; x < W; x += spacing) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += spacing) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+}
+
+function drawConnections() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,170,255,${0.08 * (1 - dist / 120)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, W, H);
+  drawGrid();
+  particles.forEach(p => { p.update(); p.draw(); });
+  drawConnections();
+  requestAnimationFrame(animate);
+}
+animate();
+
+// SCROLL REVEAL
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+
+// COUNTER ANIMATION
+function animateCounter(el, target, suffix = '') {
+  let start = 0;
+  const duration = 2000;
+  const step = (timestamp) => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const val = Math.floor(progress * target);
+    el.textContent = val + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+</script>
+</body>
+</html>
